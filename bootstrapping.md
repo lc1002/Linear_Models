@@ -48,15 +48,15 @@ sim_df_nonconst %>%
     ## # A tibble: 2 x 5
     ##   term        estimate std.error statistic   p.value
     ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
-    ## 1 (Intercept)     1.93    0.102       18.9 7.97e- 50
-    ## 2 x               3.05    0.0715      42.7 2.51e-116
+    ## 1 (Intercept)     2.05    0.112       18.4 2.78e- 48
+    ## 2 x               2.88    0.0771      37.3 9.23e-104
 
 Implement a procedure so it will gives better standard error
 
 ## Let’s try to use the bootstrap for inference
 
 ``` r
-## Get different regression sample everytime you run the code.
+## Get different regression sample every time you run the code. Draw a sample with replacement and analyze using a linear model. In the end will get the actual distribution of the intercept and the slope 
 bootstrap_sample = 
   sim_df_nonconst %>% 
   sample_frac(size = 1, replace = TRUE) %>% 
@@ -71,7 +71,7 @@ lm(y~x, data = bootstrap_sample)
     ## 
     ## Coefficients:
     ## (Intercept)            x  
-    ##       1.745        3.188
+    ##       2.062        2.864
 
 Let’s write a function..
 
@@ -117,6 +117,7 @@ bootstrap_results %>%
 ``` r
 ## normally distributed plot
 
+
 lm(y~x, data = sim_df_nonconst) %>% 
   broom::tidy()
 ```
@@ -124,8 +125,8 @@ lm(y~x, data = sim_df_nonconst) %>%
     ## # A tibble: 2 x 5
     ##   term        estimate std.error statistic   p.value
     ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
-    ## 1 (Intercept)     1.93    0.102       18.9 7.97e- 50
-    ## 2 x               3.05    0.0715      42.7 2.51e-116
+    ## 1 (Intercept)     2.05    0.112       18.4 2.78e- 48
+    ## 2 x               2.88    0.0771      37.3 9.23e-104
 
 ``` r
 ## estimate coefficient would be like under repeatedly sampling, what we think the right ans is.
@@ -141,8 +142,8 @@ bootstrap_results %>%
     ## # A tibble: 2 x 2
     ##   term            se
     ##   <chr>        <dbl>
-    ## 1 (Intercept) 0.0818
-    ## 2 x           0.0966
+    ## 1 (Intercept) 0.0674
+    ## 2 x           0.0937
 
 ## Use `modelr`
 
@@ -194,7 +195,7 @@ nyc_airbnb %>%
 <img src="bootstrapping_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
 
 ``` r
-## bootstrapping sample 1000 with replacement, linear model -- price against stars for each sample
+## bootstrapping sample 1000 with replacement of the same sizes --> fit linear model of price against stars for each bootstrap sample --> given all those results map across everything and extract just the coefficients 
 
 airbnb_bootstrap_results = 
   nyc_airbnb %>% 
@@ -214,6 +215,8 @@ ggp_star_est =
   ggplot(aes(estimate)) + 
   geom_density()
 
+## not so normally distributed 
+## If the sample size is large enough, even though the data is strange, will be able to get some asymptotic distribution 
 
 ggp_scatter = 
   nyc_airbnb %>% 

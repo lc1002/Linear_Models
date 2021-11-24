@@ -73,7 +73,7 @@ Implement a procedure so it will gives better standard error
 ## Let's try to use the bootstrap for inference
 
 ```{r}
-## Get different regression sample everytime you run the code.
+## Get different regression sample every time you run the code. Draw a sample with replacement and analyze using a linear model. In the end will get the actual distribution of the intercept and the slope 
 bootstrap_sample = 
   sim_df_nonconst %>% 
   sample_frac(size = 1, replace = TRUE) %>% 
@@ -118,6 +118,7 @@ bootstrap_results %>%
   geom_histogram() +
   facet_grid(~term, scales = "free") 
 ## normally distributed plot
+
 
 lm(y~x, data = sim_df_nonconst) %>% 
   broom::tidy()
@@ -166,7 +167,7 @@ nyc_airbnb %>%
 
 
 ```{r}
-## bootstrapping sample 1000 with replacement, linear model -- price against stars for each sample
+## bootstrapping sample 1000 with replacement of the same sizes --> fit linear model of price against stars for each bootstrap sample --> given all those results map across everything and extract just the coefficients 
 
 airbnb_bootstrap_results = 
   nyc_airbnb %>% 
@@ -186,6 +187,8 @@ ggp_star_est =
   ggplot(aes(estimate)) + 
   geom_density()
 
+## not so normally distributed 
+## If the sample size is large enough, even though the data is strange, will be able to get some asymptotic distribution 
 
 ggp_scatter = 
   nyc_airbnb %>% 
